@@ -1,0 +1,256 @@
+==208041== Conditional jump or move depends on uninitialised value(s)
+==208041==    at 0x401592: sdds::Error::operator=(sdds::Error const&) (Error.cpp  :39)
+==208041==    by 0x401A3B: sdds::Item::operator=(sdds::Item const&) (Item.cpp:56  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Uninitialised value was created by a stack allocation
+==208041==    at 0x403432: main (main_prof.cpp:36)
+==208041==
+
+
+
+
+
+==208041== Conditional jump or move depends on uninitialised value(s)
+==208041==    at 0x4C2BB42: operator delete[](void*) (vg_replace_malloc.c:651)
+==208041==    by 0x4015A2: sdds::Error::operator=(sdds::Error const&) (Error.cpp  :39)
+==208041==    by 0x401A3B: sdds::Item::operator=(sdds::Item const&) (Item.cpp:56  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Uninitialised value was created by a stack allocation
+==208041==    at 0x403432: main (main_prof.cpp:36)
+==208041==
+
+
+
+
+No, you should not write delete ptr; ptr = nullptr; delete ptr; 
+
+==208041== Invalid free() / delete / delete[] / realloc()
+==208041==    at 0x4C2BB8F: operator delete[](void*) (vg_replace_malloc.c:651)
+==208041==    by 0x4015A2: sdds::Error::operator=(sdds::Error const&) (Error.cpp  :39)
+==208041==    by 0x401A3B: sdds::Item::operator=(sdds::Item const&) (Item.cpp:56  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Address 0xa00000000 is not stack'd, malloc'd or (recently) free'd
+==208041==
+
+
+
+
+No, you should not write delete ptr; ptr = nullptr; delete ptr; 
+
+==208041== Invalid free() / delete / delete[] / realloc()
+==208041==    at 0x4C2BB8F: operator delete[](void*) (vg_replace_malloc.c:651)
+==208041==    by 0x401A58: sdds::Item::operator=(sdds::Item const&) (Item.cpp:58  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Address 0x4047d0 is 16 bytes inside data symbol "_ZTV4Tool"
+==208041==
+
+
+
+
+
+The error message "Invalid read of size 1" typically indicates that your program is attempting to read memory that has not been properly initialized or that has already been freed. This can happen in languages such as C and C++ where memory management is done manually and mistakes can easily be made.
+错误消息“大小为1的无效读取”通常表示您的程序正在尝试读取未正确初始化或已释放的内存。这可能发生在C和C++等语言中，在这些语言中，内存管理是手动完成的，很容易出错。
+
+==208041== Invalid read of size 1
+==208041==    at 0x403FA6: sdds::Utils::strlen(char const*) const (Utils.cpp:25)
+==208041==    by 0x401A86: sdds::Item::operator=(sdds::Item const&) (Item.cpp:61  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Address 0xa05b06400 is not stack'd, malloc'd or (recently) free'd
+==208041==
+==208041==
+
+
+
+
+==208041== Process terminating with default action of signal 11 (SIGSEGV)
+==208041==  Access not within mapped region at address 0xA05B06400
+==208041==    at 0x403FA6: sdds::Utils::strlen(char const*) const (Utils.cpp:25)
+==208041==    by 0x401A86: sdds::Item::operator=(sdds::Item const&) (Item.cpp:61  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  If you believe this happened as a result of a stack
+==208041==  overflow in your program's main thread (unlikely but
+==208041==  possible), you can try to increase the size of the
+==208041==  main thread stack using the --main-stacksize= flag.
+==208041==  The main thread stack size used in this run was 8388608.
+==208041==
+
+
+
+
+
+==208041== HEAP SUMMARY:
+==208041==     in use at exit: 26,965 bytes in 57 blocks
+==208041==   total heap usage: 111 allocs, 56 frees, 100,666 bytes allocated
+==208041==
+==208041== 7 bytes in 1 blocks are definitely lost in loss record 1 of 9
+==208041==    at 0x4C2AC38: operator new[](unsigned long) (vg_replace_malloc.c:4  33)
+==208041==    by 0x4025C1: sdds::Item::read(std::istream&) (Item.cpp:231)
+==208041==    by 0x403EF3: sdds::operator>>(std::istream&, sdds::PosIO&) (PosIO.  cpp:32)
+==208041==    by 0x40340A: getTool() (main_prof.cpp:33)
+==208041==    by 0x4035E2: main (main_prof.cpp:65)
+==208041==
+
+
+==208041== 80 bytes in 4 blocks are still reachable in loss record 2 of 9
+==208041==    at 0x4C2AC38: operator new[](unsigned long) (vg_replace_malloc.c:4  33)
+==208041==    by 0x402AC6: sdds::Item::load(std::basic_ifstream<char, std::char_  traits<char> >&) (Item.cpp:285)
+==208041==    by 0x403F23: sdds::operator>>(std::basic_ifstream<char, std::char_  traits<char> >&, sdds::PosIO&) (PosIO.cpp:36)
+==208041==    by 0x403527: main (main_prof.cpp:46)
+==208041==
+
+
+==208041== 568 bytes in 1 blocks are still reachable in loss record 3 of 9
+==208041==    at 0x4C29F73: malloc (vg_replace_malloc.c:309)
+==208041==    by 0x578CC4C: __fopen_internal (in /usr/lib64/libc-2.17.so)
+==208041==    by 0x4EFB97F: std::__basic_file<char>::open(char const*, std::_Ios  _Openmode, int) (basic_file.cc:240)
+==208041==    by 0x4F39EEA: std::basic_filebuf<char, std::char_traits<char> >::o  pen(char const*, std::_Ios_Openmode) (fstream.tcc:185)
+==208041==    by 0x4F3A80B: open (fstream:660)
+==208041==    by 0x4F3A80B: std::basic_ifstream<char, std::char_traits<char> >::  basic_ifstream(char const*, std::_Ios_Openmode) (fstream:533)
+==208041==    by 0x4034A0: main (main_prof.cpp:41)
+==208041==
+
+
+==208041== 568 bytes in 1 blocks are still reachable in loss record 4 of 9
+==208041==    at 0x4C29F73: malloc (vg_replace_malloc.c:309)
+==208041==    by 0x578CC4C: __fopen_internal (in /usr/lib64/libc-2.17.so)
+==208041==    by 0x4EFB97F: std::__basic_file<char>::open(char const*, std::_Ios  _Openmode, int) (basic_file.cc:240)
+==208041==    by 0x4F39EEA: std::basic_filebuf<char, std::char_traits<char> >::o  pen(char const*, std::_Ios_Openmode) (fstream.tcc:185)
+==208041==    by 0x4F3ACA3: open (fstream:923)
+==208041==    by 0x4F3ACA3: std::basic_ofstream<char, std::char_traits<char> >::  basic_ofstream(char const*, std::_Ios_Openmode) (fstream:795)
+==208041==    by 0x4034C5: main (main_prof.cpp:42)
+==208041==
+
+
+==208041== 568 bytes in 1 blocks are still reachable in loss record 5 of 9
+==208041==    at 0x4C29F73: malloc (vg_replace_malloc.c:309)
+==208041==    by 0x578CC4C: __fopen_internal (in /usr/lib64/libc-2.17.so)
+==208041==    by 0x4EFB97F: std::__basic_file<char>::open(char const*, std::_Ios  _Openmode, int) (basic_file.cc:240)
+==208041==    by 0x4F39EEA: std::basic_filebuf<char, std::char_traits<char> >::o  pen(char const*, std::_Ios_Openmode) (fstream.tcc:185)
+==208041==    by 0x4F3A80B: open (fstream:660)
+==208041==    by 0x4F3A80B: std::basic_ifstream<char, std::char_traits<char> >::  basic_ifstream(char const*, std::_Ios_Openmode) (fstream:533)
+==208041==    by 0x4034DE: main (main_prof.cpp:43)
+==208041==
+
+
+==208041== 598 bytes in 46 blocks are still reachable in loss record 6 of 9
+==208041==    at 0x4C2AC38: operator new[](unsigned long) (vg_replace_malloc.c:4  33)
+==208041==    by 0x4015D9: sdds::Error::operator=(sdds::Error const&) (Error.cpp  :42)
+==208041==    by 0x402E3B: sdds::Item::load(std::basic_ifstream<char, std::char_  traits<char> >&) (Item.cpp:324)
+==208041==    by 0x403F23: sdds::operator>>(std::basic_ifstream<char, std::char_  traits<char> >&, sdds::PosIO&) (PosIO.cpp:36)
+==208041==    by 0x403527: main (main_prof.cpp:46)
+==208041==
+
+
+==208041== 8,192 bytes in 1 blocks are still reachable in loss record 7 of 9
+==208041==    at 0x4C2AC38: operator new[](unsigned long) (vg_replace_malloc.c:4  33)
+==208041==    by 0x4F35FD3: _M_allocate_internal_buffer (fstream.tcc:56)
+==208041==    by 0x4F35FD3: std::basic_filebuf<char, std::char_traits<char> >::_  M_allocate_internal_buffer() (fstream.tcc:49)
+==208041==    by 0x4F39F02: std::basic_filebuf<char, std::char_traits<char> >::o  pen(char const*, std::_Ios_Openmode) (fstream.tcc:188)
+==208041==    by 0x4F3A80B: open (fstream:660)
+==208041==    by 0x4F3A80B: std::basic_ifstream<char, std::char_traits<char> >::  basic_ifstream(char const*, std::_Ios_Openmode) (fstream:533)
+==208041==    by 0x4034A0: main (main_prof.cpp:41)
+==208041==
+
+
+==208041== 8,192 bytes in 1 blocks are still reachable in loss record 8 of 9
+==208041==    at 0x4C2AC38: operator new[](unsigned long) (vg_replace_malloc.c:4  33)
+==208041==    by 0x4F35FD3: _M_allocate_internal_buffer (fstream.tcc:56)
+==208041==    by 0x4F35FD3: std::basic_filebuf<char, std::char_traits<char> >::_  M_allocate_internal_buffer() (fstream.tcc:49)
+==208041==    by 0x4F39F02: std::basic_filebuf<char, std::char_traits<char> >::o  pen(char const*, std::_Ios_Openmode) (fstream.tcc:188)
+==208041==    by 0x4F3ACA3: open (fstream:923)
+==208041==    by 0x4F3ACA3: std::basic_ofstream<char, std::char_traits<char> >::  basic_ofstream(char const*, std::_Ios_Openmode) (fstream:795)
+==208041==    by 0x4034C5: main (main_prof.cpp:42)
+==208041==
+
+
+==208041== 8,192 bytes in 1 blocks are still reachable in loss record 9 of 9
+==208041==    at 0x4C2AC38: operator new[](unsigned long) (vg_replace_malloc.c:4  33)
+==208041==    by 0x4F35FD3: _M_allocate_internal_buffer (fstream.tcc:56)
+==208041==    by 0x4F35FD3: std::basic_filebuf<char, std::char_traits<char> >::_  M_allocate_internal_buffer() (fstream.tcc:49)
+==208041==    by 0x4F39F02: std::basic_filebuf<char, std::char_traits<char> >::o  pen(char const*, std::_Ios_Openmode) (fstream.tcc:188)
+==208041==    by 0x4F3A80B: open (fstream:660)
+==208041==    by 0x4F3A80B: std::basic_ifstream<char, std::char_traits<char> >::  basic_ifstream(char const*, std::_Ios_Openmode) (fstream:533)
+==208041==    by 0x4034DE: main (main_prof.cpp:43)
+==208041==
+
+
+==208041== LEAK SUMMARY:
+==208041==    definitely lost: 7 bytes in 1 blocks
+==208041==    indirectly lost: 0 bytes in 0 blocks
+==208041==      possibly lost: 0 bytes in 0 blocks
+==208041==    still reachable: 26,958 bytes in 56 blocks
+==208041==         suppressed: 0 bytes in 0 blocks
+==208041==
+
+==208041== ERROR SUMMARY: 7 errors from 7 contexts (suppressed: 0 from 0)
+==208041==
+==208041== 1 errors in context 1 of 7:
+==208041== Invalid read of size 1
+==208041==    at 0x403FA6: sdds::Utils::strlen(char const*) const (Utils.cpp:25)
+==208041==    by 0x401A86: sdds::Item::operator=(sdds::Item const&) (Item.cpp:61  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Address 0xa05b06400 is not stack'd, malloc'd or (recently) free'd
+==208041==
+==208041==
+
+==208041== 1 errors in context 2 of 7:
+==208041== Invalid free() / delete / delete[] / realloc()
+==208041==    at 0x4C2BB8F: operator delete[](void*) (vg_replace_malloc.c:651)
+==208041==    by 0x401A58: sdds::Item::operator=(sdds::Item const&) (Item.cpp:58  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Address 0x4047d0 is 16 bytes inside data symbol "_ZTV4Tool"
+==208041==
+==208041==
+
+==208041== 1 errors in context 3 of 7:
+==208041== Invalid free() / delete / delete[] / realloc()
+==208041==    at 0x4C2BB8F: operator delete[](void*) (vg_replace_malloc.c:651)
+==208041==    by 0x4015A2: sdds::Error::operator=(sdds::Error const&) (Error.cpp  :39)
+==208041==    by 0x401A3B: sdds::Item::operator=(sdds::Item const&) (Item.cpp:56  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Address 0xa00000000 is not stack'd, malloc'd or (recently) free'd
+==208041==
+==208041==
+
+==208041== 1 errors in context 4 of 7:
+==208041== Conditional jump or move depends on uninitialised value(s)
+==208041==    at 0x4C2BB42: operator delete[](void*) (vg_replace_malloc.c:651)
+==208041==    by 0x4015A2: sdds::Error::operator=(sdds::Error const&) (Error.cpp  :39)
+==208041==    by 0x401A3B: sdds::Item::operator=(sdds::Item const&) (Item.cpp:56  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Uninitialised value was created by a stack allocation
+==208041==    at 0x403432: main (main_prof.cpp:36)
+==208041==
+==208041==
+
+==208041== 1 errors in context 5 of 7:
+==208041== Conditional jump or move depends on uninitialised value(s)
+==208041==    at 0x401592: sdds::Error::operator=(sdds::Error const&) (Error.cpp  :39)
+==208041==    by 0x401A3B: sdds::Item::operator=(sdds::Item const&) (Item.cpp:56  )
+==208041==    by 0x403DD8: Tool::operator=(Tool&&) (main_prof.cpp:17)
+==208041==    by 0x403615: main (main_prof.cpp:65)
+==208041==  Uninitialised value was created by a stack allocation
+==208041==    at 0x403432: main (main_prof.cpp:36)
+==208041==
+==208041==
+
+==208041== 1 errors in context 6 of 7:
+==208041== Use of uninitialised value of size 8
+==208041==    at 0x403F11: sdds::operator>>(std::basic_ifstream<char, std::char_  traits<char> >&, sdds::PosIO&) (PosIO.cpp:36)
+==208041==    by 0x403527: main (main_prof.cpp:46)
+==208041==  Uninitialised value was created by a stack allocation
+==208041==    at 0x403432: main (main_prof.cpp:36)
+==208041==
+==208041== ERROR SUMMARY: 7 errors from 7 contexts (suppressed: 0 from 0)
+Script done, file is student_output.txt
+
