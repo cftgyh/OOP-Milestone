@@ -11,13 +11,9 @@
 #include <iostream>
 #include <fstream>
 #include "Item.h"
-// << write(display on screen)
-// f<< save(display to file)
-// >> read(read from keyboard)
-// f>> load(read from file)
+
 using namespace sdds;
 using namespace std;
-
 class Tool :public Item {
 public:
     char itemType()const {
@@ -31,7 +27,8 @@ void displayFile(const char* name) {
     while (file.get(ch)) cout << ch;
     cout << "</thefile>" << endl;
 }
-Tool& getTool(Tool& T) {
+Tool getTool() {
+    Tool T;
     cout << "Please enter the Tool information: " << endl;
     cin >> T;
     return T;
@@ -41,14 +38,12 @@ int main() {
     Tool T[50];
     Tool M;
     int cnt{}, i;
-    //string line;
     ifstream ifile("tools.csv");
     ofstream ofile("output.csv");
     ifstream badFile("bad_tools.csv");
-    while (ifile && cnt < 4) {  // edit
+    while (ifile) {
         ifile.ignore(2);
         ifile >> T[cnt];
-        // f>> load(read from file)
         ifile.ignore(1000, '\n');
         if (ifile) cnt++;
     }
@@ -67,13 +62,11 @@ int main() {
         "11> 0\n"
         "12> " << MAX_STOCK_NUMBER + 1 << endl <<
         "13> 10\n";
-    getTool(T[cnt++]);
-    //T[cnt++] = getTool();
+    T[cnt++] = getTool();
     M = T[0];
     for (i = 0; i < cnt; i++) {
         T[i].displayType(POS_LIST);
         cout << T[i] << (T[i] == "3456" ? "<- Knife!" : "") << endl;
-        // << write(display on screen)
         if (M > T[i]) M = T[i];
         sum = sum += T[i];
     }
@@ -81,7 +74,7 @@ int main() {
     cout.precision(2);
     cout << "Total price of all items: " << sum << endl;
     M.displayType(POS_FORM);
-    cout << "First name in dictionary:" << endl << M << endl;                                         // << write(display on screen)
+    cout << "First name in dictionary:" << endl << M << endl;
     sum = 0;
     for (i = 0; i < cnt; i++) {
         T[i].bprint(cout);
@@ -94,7 +87,6 @@ int main() {
         cout << "-=2: " << (T[i] -= 2) << endl;
         cout << "------------------" << endl;
         ofile << T[i] << endl;
-        //f << save(display to file)
     }
     ofile.close();
     displayFile("output.csv");
@@ -102,15 +94,14 @@ int main() {
     while (badFile) {
         badFile.ignore(2);
         badFile >> M;
-        // f >> load(read from file)
         badFile.ignore(1000, '\n');
+        if (badFile) {
             M.displayType(POS_LIST);
             if (M)
                 cout << M << endl;
-                // << write(display on screen)
             else
-                cout << "Record number " << cnt++ << " " << M << endl;                                                 // << write(display on screen)
+                cout << "Record number " << cnt++ << " " << M << endl;
+        }
     }
-
     return 0;
 }

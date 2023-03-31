@@ -28,10 +28,10 @@ namespace sdds {
 		m_displayType = 0; // POS_LIST = 1; POS_FROM = 2;
 		m_error.clear();
 	}
-	bool Item::isEmpty() const{
+	bool Item::isEmpty() const {
 		return m_name == nullptr;
 	}
-	Item::Item():PosIO()
+	Item::Item()
 	{
 		// set invalid empty state -> empty
 		setEmpty();
@@ -39,40 +39,37 @@ namespace sdds {
 	// Rule of three
 	Item::Item(const Item& I)
 	{
-		setEmpty();
-		cout << I.m_name << "********testing1 I.name********** " << endl;
-		*this = I;
+		m_sku[0] = '\0';
+		m_name = nullptr;	// MAX_NAME_LEN
+		m_price = 0;
+		m_taxed = false;	// if taxable or not
+		m_quantity = 0;	// no Of items in the shop
+		m_displayType = 0; // POS_LIST = 1; POS_FROM = 2;
+		//m_error.clear();
+		operator=(I);
 	}
 	Item::~Item()
 	{
-		if (m_name) {
-			delete[] m_name;
-		}
+		delete[] m_name;
 		m_name = nullptr;
 	}
 	// there are nothing inside M
 	Item& Item::operator=(const Item& I)
 	{
-		if (this != &I && !I.isEmpty()) {
+		if (this != &I) {
 			// size_t length{};
 			U.strcpy(m_sku, I.m_sku);
 			m_price = I.m_price;
 			m_taxed = I.m_taxed;
 			m_quantity = I.m_quantity;
+			if(I.m_error) m_error=I.m_error;
 			m_displayType = I.m_displayType;
+			if (m_name) delete[] m_name;	// error: Invalid free() / delete / delete[] / realloc()
 
-			if (I.m_name != nullptr) {
-				if (m_name != nullptr) {
-					delete[] m_name;	// error: Invalid free() / delete / delete[] / realloc()
-				}
-				size_t length = U.strlen(I.m_name);
+				//size_t length = U.strlen(I.m_name);
 				// error: invalid read of size 1 error
-				m_name = new char[length + 1];
-				U.strcpy(m_name, I.m_name);
-			}
-		}
-		else {
-			m_name = nullptr;
+				m_name = new char[U.strlen(I.m_name) + 1];
+				U.strcpy(m_name, I.m_name);	
 		}
 		return *this;
 	}
@@ -152,20 +149,25 @@ namespace sdds {
 					ostr.width(7);
 					ostr << m_sku;
 					ostr << "|";
+
 					ostr.width(20);
 					ostr << name;
 					cout.unsetf(ios::left);
 					ostr << "|";
+
 					ostr.width(7);
 					ostr << m_price;
-					ostr << "| ";
-					ostr.width(2);
-					if (m_taxed) ostr << "X";
-					else ostr << " ";
 					ostr << "|";
+
+					ostr.width(3);
+					if (m_taxed) ostr << " X ";
+					else ostr << "";
+					ostr << "|";
+
 					ostr.width(4);
 					ostr << m_quantity;
 					ostr << "|";
+
 					ostr.width(9);
 					ostr << (cost() * m_quantity);
 					ostr << "|";
@@ -174,7 +176,7 @@ namespace sdds {
 					ostr.fill('=');
 					ostr.width(13);
 					ostr << '=';
-					ostr << "V" << endl;
+					ostr << "v" << endl;
 					ostr << "Name:        " << m_name << endl;
 					ostr << "Sku:         " << m_sku << endl;
 					ostr << "Price:       " << m_price << endl;
@@ -223,11 +225,11 @@ namespace sdds {
 	std::istream& Item::read(std::istream& istr)
 	{
 		char taxed{};
-		char sku[4096]{};
-		char temp[4096]{};
+		char sku[1024]{};
+		char temp[1024]{};
 		cout << "Sku" << endl << "> ";
 		istr >> sku;
-		/* max_sku_len = 7, however, if enter 8chars, 
+		/* max_sku_len = 7, however, if enter 8chars,
 		it will get the first 7chars instead of cin.fail() */
 		while (istr.fail() || U.strlen(sku) > MAX_SKU_LEN) {
 			istr.clear();
@@ -244,15 +246,15 @@ namespace sdds {
 		}
 		cout << "Name" << endl << "> ";
 		// istr >> name; use cin.getline(...) to read space-seperated string, istr can only read before space
-		istr.getline(temp, 4096);
+		istr.getline(temp, 1024);
 
 		while (U.strlen(temp) > MAX_NAME_LEN) {
 			cout << ERROR_POS_NAME << endl << "> ";
-			istr.getline(temp, 4096);
+			istr.getline(temp, 1024);
 		}
 		m_name = U.aloCopy(U.strlen(temp), temp);
-	/*	m_name = new char[U.strlen(temp) + 1];
-		U.strcpy(m_name, temp);*/
+		/*	m_name = new char[U.strlen(temp) + 1];
+			U.strcpy(m_name, temp);*/
 
 
 		cout << "Price" << endl << "> ";
@@ -294,65 +296,52 @@ namespace sdds {
 	*/
 	std::ifstream& Item::load(std::ifstream& ifst)
 	{
-		char sku[4096]{};
-		char name[4096]{};
+		char sku[1024]{};
+		char name[1024]{};
 		double price{};
-		bool taxed{};	
+		int taxed{};
 		int quantity{};
-		m_error.clear();
-		//setEmpty();
+		m_error.clear();  //setEmpty();
 
-		ifst.getline(sku, 4096, ',');
-		if (U.strlen(sku) <= MAX_SKU_LEN && U.strlen(sku) > 0) {
-			U.strcpy(m_sku, sku);
+		ifst.getline(sku, 1024, ',');
+		ifst.getline(name, 1024, ',');
+		ifst >> price;
+		ifst.ignore();
+		ifst >> taxed;
+		ifst.ignore();
+		ifst >> quantity;
 
-			ifst.getline(name, 4096, ',');
-			if (name != nullptr && U.strlen(name) <= MAX_NAME_LEN) {
-				if (m_name) {
-					delete[] m_name;
-				}
-				m_name = new char[U.strlen(name) + 1];
-				U.strcpy(m_name, name);
-
-				ifst >> price;
-				if (!ifst.fail() && price > 0) {
-					m_price = price;
-					ifst.ignore();
-
-					ifst >> taxed;
-					if (!ifst.fail()) {
-						m_taxed = taxed;
-						ifst.ignore();
-
-						ifst >> quantity;
-						if (!ifst.fail() && quantity > 0 && quantity <= MAX_STOCK_NUMBER) {
-							m_quantity = quantity;
-						}
-						else {
-							ifst.clear();
-							m_error = ERROR_POS_QTY;
-						}
-					}
-					else {
-						ifst.clear();
-						m_error = ERROR_POS_TAX;
-					}
-				}
-				else {
-					ifst.clear();
-					m_error = ERROR_POS_PRICE;
-				}
+		if (!ifst.fail()) {
+			if (U.strlen(sku) > MAX_SKU_LEN) {
+				m_error = ERROR_POS_SKU;
 			}
-			else {
-				ifst.clear();
+			else if (U.strlen(name) > MAX_NAME_LEN) {
 				m_error = ERROR_POS_NAME;
 			}
+			else if (price < 0) {
+				m_error = ERROR_POS_PRICE;
+			}
+			else if (taxed != 0 && taxed != 1) {
+				m_error = ERROR_POS_TAX;
+			}
+			else if (quantity > MAX_STOCK_NUMBER) {
+				m_error = ERROR_POS_QTY;
+			}
+			if (!m_error) {
+				U.strcpy(m_sku, sku);
+				if (m_name) delete[] m_name;
+				m_name = new char[U.strlen(name) + 1];
+				U.strcpy(m_name, name);
+				m_price = price;
+				if (taxed == 0) {
+					m_taxed = false;
+				}
+				else {
+					m_taxed = true;
+				}
+				m_quantity = quantity;
+			}
 		}
-		else {
-			ifst.clear();
-			m_error = ERROR_POS_SKU;
-		}
-
 		return ifst;
 	}
 	std::ostream& Item::bprint(std::ostream& ostr) const
@@ -362,19 +351,22 @@ namespace sdds {
 
 		cout.fill(' ');
 		cout.setf(ios::left);
-		ostr << "|";
+		ostr << "| ";
+
 		ostr.width(20);
 		ostr << name;
 		cout.unsetf(ios::left);
 		ostr << "|";
-		ostr.width(11);
+
+		ostr.width(10);
 		ostr << cost();
-		ostr << "| ";
-		ostr.width(5);
+		ostr << " |";
+
+		ostr.width(3);
 		if (m_taxed) ostr << "T";
 		else ostr << " ";
-		ostr << "|" << endl;
-		
+		ostr << "  |" << endl;
+
 		return ostr;
 	}
 	// Helper function
